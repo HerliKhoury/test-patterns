@@ -1,8 +1,32 @@
 <template>
   <div class="container">
-    <div class="login-card">
-      <h2 class="title">Sign in to your account</h2>
+    <div class="signup-card">
+      <h2 class="title">Create your account</h2>
       <form class="form" @submit.prevent="handleSubmit">
+        <div class="input-group">
+          <label for="first-name" class="sr-only">First name</label>
+          <input
+            id="first-name"
+            name="firstName"
+            type="text"
+            v-model="firstName"
+            required
+            class="input"
+            placeholder="First name"
+          />
+        </div>
+        <div class="input-group">
+          <label for="last-name" class="sr-only">Last name</label>
+          <input
+            id="last-name"
+            name="lastName"
+            type="text"
+            v-model="lastName"
+            required
+            class="input"
+            placeholder="Last name"
+          />
+        </div>
         <div class="input-group">
           <label for="email-address" class="sr-only">Email address</label>
           <input
@@ -27,46 +51,92 @@
             placeholder="Password"
           />
         </div>
+        <div class="input-group">
+          <label for="confirm-password" class="sr-only">Confirm password</label>
+          <input
+            id="confirm-password"
+            name="confirmPassword"
+            type="password"
+            v-model="confirmPassword"
+            required
+            class="input"
+            placeholder="Confirm password"
+            :class="{ 'input-error': passwordMismatch }"
+          />
+          <span v-if="passwordMismatch" class="error-message">
+            Passwords do not match
+          </span>
+        </div>
         <div class="options">
           <div class="checkbox-group">
             <input
-              id="remember-me"
-              name="remember-me"
+              id="agree-terms"
+              name="agree-terms"
               type="checkbox"
+              v-model="agreeToTerms"
+              required
               class="checkbox"
             />
-            <label for="remember-me" class="checkbox-label">Remember me</label>
+            <label for="agree-terms" class="checkbox-label">
+              I agree to the <a href="#" class="link">Terms of Service</a> and <a href="#" class="link">Privacy Policy</a>
+            </label>
           </div>
-          <a href="#" class="link">Forgot your password?</a>
         </div>
-        <button type="submit" class="button">Sign in</button>
+        <button type="submit" class="button" :disabled="!canSubmit">
+          Create Account
+        </button>
       </form>
-      <p class="signup-text">
-        Don't have an account? <a href="#" class="link" @click="handleSignUp">Sign up</a>
+      <p class="signin-text">
+        Already have an account? <a href="#" class="link" @click="handleLogin">Sign in</a>
       </p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
-const router = useRouter()
+const router = useRouter();
 
+const firstName = ref('');
+const lastName = ref('');
 const email = ref('');
 const password = ref('');
+const confirmPassword = ref('');
+const agreeToTerms = ref(false);
+
+const passwordMismatch = computed(() => {
+  return confirmPassword.value.length > 0 && password.value !== confirmPassword.value;
+});
+
+const canSubmit = computed(() => {
+  return firstName.value && 
+         lastName.value && 
+         email.value && 
+         password.value && 
+         confirmPassword.value && 
+         !passwordMismatch.value && 
+         agreeToTerms.value;
+});
 
 const handleSubmit = () => {
-  // Add your authentication logic here
+  if (!canSubmit.value) return;
+  
+  // Add your registration logic here
+  console.log('First Name:', firstName.value);
+  console.log('Last Name:', lastName.value);
   console.log('Email:', email.value);
   console.log('Password:', password.value);
-  router.push('/dashboard')
+  console.log('Terms Agreed:', agreeToTerms.value);
+  
+  // Redirect to dashboard or welcome page after successful registration
+  router.push('/dashboard');
 };
 
-const handleSignUp = () => {
-  router.push('/signUp')
-};
+const handleLogin = () => {
+    router.push('/');
+}
 </script>
 
 <style scoped>
@@ -79,7 +149,7 @@ const handleSignUp = () => {
   background-color: rgb(171, 63, 243);
 }
 
-.login-card {
+.signup-card {
   max-width: 400px;
   width: 100%;
   background-color: #ffffff;
@@ -105,6 +175,7 @@ const handleSignUp = () => {
 .input-group {
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .input {
@@ -127,16 +198,31 @@ const handleSignUp = () => {
   color: #6b7280;
 }
 
+.input-error {
+  border-color: #ef4444;
+}
+
+.input-error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
 .options {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   font-size: 0.875rem;
 }
 
 .checkbox-group {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  gap: 0.5rem;
 }
 
 .checkbox {
@@ -144,6 +230,8 @@ const handleSignUp = () => {
   height: 1rem;
   border: 1px solid #d1d5db;
   border-radius: 0.25rem;
+  margin-top: 0.125rem;
+  flex-shrink: 0;
 }
 
 .checkbox:checked {
@@ -152,8 +240,8 @@ const handleSignUp = () => {
 }
 
 .checkbox-label {
-  margin-left: 0.5rem;
   color: #1f2937;
+  line-height: 1.4;
 }
 
 .link {
@@ -179,7 +267,7 @@ const handleSignUp = () => {
   transition: background-color 0.2s;
 }
 
-.button:hover {
+.button:hover:not(:disabled) {
   background-color: #4338ca;
 }
 
@@ -188,7 +276,12 @@ const handleSignUp = () => {
   box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.5);
 }
 
-.signup-text {
+.button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.signin-text {
   margin-top: 1rem;
   text-align: center;
   font-size: 0.875rem;
@@ -208,7 +301,7 @@ const handleSignUp = () => {
 
 /* Responsive design */
 @media (max-width: 640px) {
-  .login-card {
+  .signup-card {
     padding: 1.5rem;
   }
 
