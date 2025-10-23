@@ -3,6 +3,7 @@ import LoginView from "../views/LoginView.vue";
 import DashboardView from "../views/DashboardView.vue";
 import SignupView from "../views/SignupView.vue";
 import { fetchPokemonList } from "../services/PokemonService";
+import PokemonDetailView from "../views/PokemonDetailView.vue";
 
 const router = createRouter({
   history: createWebHistory((import.meta as any).env.BASE_URL),
@@ -24,6 +25,12 @@ const router = createRouter({
       path: "/signUp",
       name: "signUp",
       component: SignupView,
+    },
+    {
+      path: "/pokemonDetail/:pokemonId",
+      name: "pokemonDetail",
+      component: PokemonDetailView,
+      props: true // Automatically passes route params as props to the component
     },
   ],
 });

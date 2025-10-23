@@ -2,7 +2,7 @@
     <div class="maDiv">
         <h1>Pokemon Dashboard</h1>
         <div class="pokemon-grid">
-            <div v-for="pokemon in pokemonList" :key="pokemon.id" class="pokemon-card">
+            <div v-for="pokemon in pokemonList" :key="pokemon.id" class="pokemon-card" @click="handlePokemonDetail(pokemon.id)">
                 <img :src="pokemon.image" :alt="pokemon.name" />
                 <h3>{{ pokemon.name }}</h3>
                 <p>Type: {{ pokemon.type }}</p>
@@ -14,11 +14,17 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { PokemonType } from '../types/PokemonTypes';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 
 const props = defineProps<{
     fetchPokemonList: () => Promise<PokemonType[]>;
 }>();
+
+const handlePokemonDetail = (pokemonId: Number) => {
+    router.push(`/pokemonDetail/${pokemonId}`)
+}
 
 const pokemonList = ref<PokemonType[]>([])
 

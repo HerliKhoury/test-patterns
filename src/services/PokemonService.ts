@@ -15,3 +15,18 @@ export async function fetchPokemonList(): Promise<PokemonType[]> {
         throw error; 
     }
 }
+
+
+export async function fetchPokemonById(id: number): Promise<PokemonType> {
+    try {
+        const response = await fetch(`${BASE_URL}/pokemon/${id}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data: PokemonType = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Failed to fetch Pokémon list:", error);
+        throw error; 
+    }
+}
