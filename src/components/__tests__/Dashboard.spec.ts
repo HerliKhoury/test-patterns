@@ -21,6 +21,13 @@ const mockFetchPokemonListFn = vi.fn().mockImplementation(async () => {
   ];
 });
 
+const mockPush = vi.fn();
+vi.mock("vue-router", () => ({
+  useRouter: () => ({
+    push: mockPush,
+  }),
+}));
+
 describe("Testing -> DasboardView", () => {
   it("There must be a title on the screen", () => {
     const wrapper = mount(DashboardView, {
@@ -62,5 +69,50 @@ describe("Testing -> DasboardView", () => {
       },
       { timeout: 5000 }
     );
+  });
+
+  it("Should navigate to pokemon detail page when clicking on a pokemon card", async () => {
+    const wrapper = mount(DashboardView, {
+      props: { fetchPokemonList: mockFetchPokemonListFn },
+    });
+
+    // Wait for pokemon cards to render
+    await waitFor(
+      () => {
+        const pokemonCards = wrapper.findAll(".pokemon-card");
+        expect(pokemonCards.length).toBeGreaterThan(0);
+      },
+      { timeout: 5000 }
+    );
+
+    // Click on the first pokemon card (Pikachu with id 1)
+    const firstCard = wrapper.find(".pokemon-card");
+    await firstCard.trigger("click");
+
+    // Verify that router.push was called with the correct route
+    expect(mockPush).toHaveBeenCalledTimes(1);
+    expect(mockPush).toHaveBeenCalledWith("/pokemonDetail/1");
+  });
+
+
+  it("Should navigate with correct pokemon id when clicking different cards", async () => {
+    const wrapper = mount(DashboardView, {
+      props: { fetchPokemonList: mockFetchPokemonListFn },
+    });
+
+    await waitFor(
+      () => {
+        const pokemonCards = wrapper.findAll(".pokemon-card");
+        expect(pokemonCards.length).toBe(2);
+      },
+      { timeout: 5000 }
+    );
+
+    // Click on the second pokemon card (Charmander with id 2)
+    const secondCard = wrapper.findAll(".pokemon-card")[1];
+    await secondCard.trigger("click");
+
+    // Verify router.push was called with Charmander's id
+    expect(mockPush).toHaveBeenCalledWith("/pokemonDetail/2");
   });
 });
