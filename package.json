@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:coverage:ui": "vitest run --coverage && xdg-open coverage/index.html"
   },
   "dependencies": {
     "core-js": "^3.8.3",
