@@ -94,7 +94,6 @@ describe("Testing -> DasboardView", () => {
     expect(mockPush).toHaveBeenCalledWith("/pokemonDetail/1");
   });
 
-
   it("Should navigate with correct pokemon id when clicking different cards", async () => {
     const wrapper = mount(DashboardView, {
       props: { fetchPokemonList: mockFetchPokemonListFn },
@@ -114,5 +113,48 @@ describe("Testing -> DasboardView", () => {
 
     // Verify router.push was called with Charmander's id
     expect(mockPush).toHaveBeenCalledWith("/pokemonDetail/2");
+  });
+
+  it("Should log error and return early when fetchPokemonList prop is missing", async () => {
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const wrapper = mount(DashboardView, {
+      props: { fetchPokemonList: undefined as any },
+    });
+
+    await wrapper.vm.$nextTick();
+
+    // Verify that console.error was called with the correct message
+    expect(consoleErrorSpy).toHaveBeenCalledWith("fetchPokemonList prop is missing");
+
+    // Verify that no pokemon cards are rendered
+    const pokemonCards = wrapper.findAll(".pokemon-card");
+    expect(pokemonCards.length).toBe(0);
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it("Should handle error when fetchPokemonList throws an error", async () => {
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const errorMessage = "Failed to fetch Pokemon";
+    const mockFailingFetch = vi.fn().mockRejectedValue(new Error(errorMessage));
+
+    const wrapper = mount(DashboardView, {
+      props: { fetchPokemonList: mockFailingFetch },
+    });
+
+    await waitFor(
+      () => {
+        // Verify that console.error was called with error message
+        expect(consoleErrorSpy).toHaveBeenCalledWith("Error fetching Pokemon:", expect.any(Error));
+      },
+      { timeout: 5000 }
+    );
+
+    // Verify that no pokemon cards are rendered
+    const pokemonCards = wrapper.findAll(".pokemon-card");
+    expect(pokemonCards.length).toBe(0);
+
+    consoleErrorSpy.mockRestore();
   });
 });
