@@ -5,10 +5,10 @@ import PokemonDetailView from "../../views/PokemonDetailView.vue";
 import { faker } from "@faker-js/faker";
 
 // Mock the PokemonService
-const mockFetchPokemonById = vi.fn();
-vi.mock("../../services/PokemonService", () => ({
-  fetchPokemonById: (...args) => mockFetchPokemonById(...args),
-}));
+const mockFetchPokemonById = vi.fn()
+vi.mock('../../services/PokemonService', () => ({
+  fetchPokemonById: (pokemonId: string) => mockFetchPokemonById(pokemonId)
+}))
 
 // Mock vue-router
 const mockRouterBack = vi.fn();
