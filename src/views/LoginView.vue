@@ -39,7 +39,7 @@
           </div>
           <a href="#" class="link">Forgot your password?</a>
         </div>
-        <button type="submit" class="button">Sign in</button>
+        <button type="submit" class="button">Login</button>
       </form>
       <p class="signup-text">
         Don't have an account? <a href="#" class="link" @click="handleSignUp">Sign up</a>
