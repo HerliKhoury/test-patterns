@@ -87,7 +87,7 @@
         </button>
       </form>
       <p class="signin-text">
-        Already have an account? <a href="#" class="link" @click="handleLogin">Sign in</a>
+        Already have an account? <a href="#" class="link" @click.prevent="handleLogin">Sign in</a>
       </p>
     </div>
   </div>
