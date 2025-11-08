@@ -42,7 +42,7 @@
         <button type="submit" class="button">Login</button>
       </form>
       <p class="signup-text">
-        Don't have an account? <a href="#" class="link" @click="handleSignUp">Sign up</a>
+        Don't have an account? <a href="#" class="link" @click.prevent="handleSignUp">Sign up</a>
       </p>
     </div>
   </div>
