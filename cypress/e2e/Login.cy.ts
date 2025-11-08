@@ -45,10 +45,10 @@ describe("Tests Login page", () => {
   it("When clicking (Sign up), should move to SignupView", () => {
     cy.visit("/");
 
-    // Click the Login button
+    // Click the Sign up link
     cy.contains("Sign up").click();
 
-    // Assert that we navigated to the dashboard
+    // Assert that we find "Create your acount" at reached page
     cy.contains("Create your account");
   });
 });
