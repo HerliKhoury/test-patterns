@@ -38,7 +38,7 @@ describe("Tests Dashboard page", () => {
     // Click on the Pikachu card to navigate to detail page
     // This triggers the pokemon detail API call
     cy.contains("Pikachu").click();
-    
+
     // Verify we're on the detail page by checking for the "Go Back" button
     cy.contains("Go Back");
   });
@@ -61,7 +61,7 @@ describe("Tests Dashboard page", () => {
 
     // Navigate to Pikachu's detail page
     cy.contains("Pikachu").click();
-    
+
     // Navigate back to the dashboard
     cy.contains("Go Back").click();
 
@@ -70,5 +70,34 @@ describe("Tests Dashboard page", () => {
     cy.contains("Pikachu");
     cy.contains("Rotom");
     cy.contains("Charmander");
+  });
+
+  it("There must be at least 3 pokemon cards displayed", () => {
+    // Mock the API call to return pokemon data
+    cy.intercept("GET", "http://localhost:3003/pokemon", {
+      fixture: "pokemons.json",
+    });
+
+    // Navigate to the dashboard page
+    cy.visit("/dashboard");
+
+    // Find all list items (pokemon cards) within the pokemon grid
+    // The test expects exactly 3 pokemon cards to be rendered
+    cy.get(".pokemon-grid")
+      .find(".pokemon-card")
+      .should(($cards) => {
+        // Assert that there are exactly 3 pokemon cards
+        expect($cards).to.have.length(3);
+
+        // Get references to each pokemon card
+        const pikachu = $cards[0];
+        const rotom = $cards[1];
+        const charmander = $cards[2];
+
+        // Verify each pokemon card displays the correct name
+        expect(pikachu.textContent).to.contain("Pikachu");
+        expect(rotom.textContent).to.contain("Rotom");
+        expect(charmander.textContent).to.contain("Charmander");
+      });
   });
 });
